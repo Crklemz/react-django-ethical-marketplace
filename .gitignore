@@ -1,20 +1,51 @@
+# TODO: double check this file
+# Logs
+frontend/logs
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+
+# Node modules
+frontend/node_modules
+
+# Build directories
+frontend/dist
+frontend/dist-ssr
+
+# Local environment files
+frontend/*.local
+
+# Editor directories and files
+frontend/.vscode/*
+!frontend/.vscode/extensions.json
+frontend/.idea
+frontend/.DS_Store
+frontend/*.suo
+frontend/*.ntvs*
+frontend/*.njsproj
+frontend/*.sln
+frontend/*.sw?
+
 # Python
-*.pyc
-*.pyo
-*.pyd
-__pycache__/
-*.swp
-*.swo
-*.egg-info/
-.eggs/
-*.log
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+backend/__pycache__/
+backend/*.swp
+backend/*.swo
+backend/*.egg-info/
+backend/.eggs/
+backend/*.log
 
 # Django
-*.sqlite3
-db.sqlite3
-/media
-/staticfiles
-/static
+backend/*.sqlite3
+backend/db.sqlite3
+backend/media
+backend/staticfiles
+backend/static
 
 # Environment variables
 .env
@@ -23,22 +54,3 @@ backend/.env
 
 # Poetry
 poetry.lock
-
-# Node
-node_modules/
-npm-debug.log
-yarn-error.log
-yarn-debug.log
-.pnp/
-.pnp.js
-
-# React
-build/
-dist/
-.DS_Store
-
-# TypeScript
-*.tsbuildinfo
-
-# VS Code
-.vscode/
