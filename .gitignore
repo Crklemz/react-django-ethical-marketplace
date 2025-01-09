@@ -1,0 +1,44 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.swp
+*.swo
+*.egg-info/
+.eggs/
+*.log
+
+# Django
+*.sqlite3
+db.sqlite3
+/media
+/staticfiles
+/static
+
+# Environment variables
+.env
+frontend/.env
+backend/.env
+
+# Poetry
+poetry.lock
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+.pnp/
+.pnp.js
+
+# React
+build/
+dist/
+.DS_Store
+
+# TypeScript
+*.tsbuildinfo
+
+# VS Code
+.vscode/
