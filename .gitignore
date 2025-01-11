@@ -51,6 +51,15 @@ backend/staticfiles
 backend/static
 db.sqlite3
 
+# Ignore all __pycache__ directories
+**/__pycache__/
+
+# Ignore all .pyc files
+**/*.pyc
+
+# Ignore migrations cache
+marketplace/migrations/__pycache__/
+
 # Environment variables
 .env
 frontend/.env
