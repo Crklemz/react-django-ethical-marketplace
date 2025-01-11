@@ -9,3 +9,14 @@ export const fetchProducts = async () => {
         throw error;
     }
 };
+
+export const fetchProductById = async (id: number) => {
+    try {
+        const response = await api.get(`products/${id}/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        throw error;
+    }
+};
+

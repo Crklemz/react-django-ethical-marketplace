@@ -1,12 +1,16 @@
 import React from 'react';
-import ProductList from "./components/ProductList";
-
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Products from './components/ProductList';
+import ProductDetails from './components/ProductDetails';
 
 const App: React.FC = () => {
     return (
-        <div>
-            <ProductList />
-        </div>
+        <Router>
+            <Routes>
+                <Route path="/products" element={<Products />} />
+                <Route path="/products/:id" element={<ProductDetails />} />
+            </Routes>
+        </Router>
     );
 };
 
