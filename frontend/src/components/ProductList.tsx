@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchProducts } from '../services/productService';
-import { useCart } from '../context/CartContext'; // Import CartContext to use cart functionality
+import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 interface Product {
     id: number;
@@ -13,6 +14,7 @@ const ProductList: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const { addToCart } = useCart(); // Get addToCart from CartContext
+    const navigate = useNavigate(); // Initialize useNavigate for navigation
 
     useEffect(() => {
         const getProducts = async () => {
@@ -28,6 +30,10 @@ const ProductList: React.FC = () => {
 
         getProducts();
     }, []);
+
+    const handleGoToCart = () => {
+        navigate('/cart'); // Navigate to the cart page
+    };
 
     if (loading) {
         return <p>Loading products...</p>;
@@ -46,6 +52,9 @@ const ProductList: React.FC = () => {
                     </li>
                 ))}
             </ul>
+            <button onClick={handleGoToCart} style={{ marginTop: '20px' }}>
+                Go to Cart
+            </button>
         </div>
     );
 };
