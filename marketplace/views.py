@@ -48,25 +48,13 @@ class ProductDetailView(APIView):
 
 class CartView(APIView):
     def get(self, request):
-        # Assuming a single cart for simplicity
-        cart, created = Cart.objects.get_or_create(id=1)
+        # Assuming you fetch the cart by user or session
+        cart = Cart.objects.first()  # Replace with actual logic
+        if not cart:
+            return Response({"detail": "Cart not found"}, status=status.HTTP_404_NOT_FOUND)
+        
         serializer = CartSerializer(cart)
         return Response(serializer.data)
-
-    def post(self, request):
-        # Add an item to the cart
-        cart, created = Cart.objects.get_or_create(id=1)
-        product_id = request.data.get('product_id')
-        quantity = request.data.get('quantity', 1)
-
-        product = Product.objects.get(id=product_id)
-        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-        if not created:
-            cart_item.quantity += quantity
-        cart_item.save()
-
-        serializer = CartSerializer(cart)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class CartItemView(APIView):
     def delete(self, request, item_id):
@@ -87,4 +75,36 @@ class CartItemView(APIView):
             return Response(serializer.data)
         except CartItem.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
+class AddToCartView(APIView):
+    def post(self, request):
+        # Extract product_id and quantity from the request
+        product_id = request.data.get('product_id')
+        quantity = request.data.get('quantity', 1)  # Default quantity is 1
+
+        try:
+            # Fetch the cart (or create one if it doesn't exist)
+            cart, _ = Cart.objects.get_or_create(id=1)  # Replace with user/session logic if needed
+
+            # Fetch the product
+            product = get_object_or_404(Product, id=product_id)
+
+            # Check if the item is already in the cart
+            cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+            if not created:
+                cart_item.quantity += quantity  # Increment quantity if the item already exists
+            else:
+                cart_item.quantity = quantity  # Set quantity for a new item
+
+            cart_item.save()  # Save the updated cart item
+
+            # Return the updated cart
+            serializer = CartSerializer(cart)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Product.DoesNotExist:
+            return Response({"error": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 

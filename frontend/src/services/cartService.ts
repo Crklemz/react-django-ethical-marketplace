@@ -1,13 +1,25 @@
 import api from './api';
 
 export const fetchCart = async () => {
-    const response = await api.get('cart/');
-    return response.data;
+    try {
+        const response = await api.get('/cart/'); // Adjust endpoint if necessary
+        console.log('Fetched cart data:', response.data); // Debug the response
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching cart:', error);
+        throw error;
+    }
 };
 
 export const addToCart = async (productId: number, quantity: number) => {
-    const response = await api.post('cart/', { product: productId, quantity });
-    return response.data;
+    try {
+        const response = await api.post('/cart/add/', { product_id: productId, quantity });
+        console.log('Added to cart:', response.data); // Debug response
+        return response.data;
+    } catch (error) {
+        console.error('Error adding to cart:', error);
+        throw error;
+    }
 };
 
 export const removeFromCart = async (cartItemId: number) => {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchProducts } from '../services/productService';
+import { useCart } from '../context/CartContext'; // Import CartContext to use cart functionality
 
 interface Product {
     id: number;
@@ -11,6 +12,7 @@ interface Product {
 const ProductList: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
+    const { addToCart } = useCart(); // Get addToCart from CartContext
 
     useEffect(() => {
         const getProducts = async () => {
@@ -40,6 +42,7 @@ const ProductList: React.FC = () => {
                         <h2>{product.name}</h2>
                         <p>{product.description}</p>
                         <p>${product.price}</p>
+                        <button onClick={() => addToCart(product)}>Add to Cart</button>
                     </li>
                 ))}
             </ul>

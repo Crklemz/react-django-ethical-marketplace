@@ -8,15 +8,15 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    product = ProductSerializer()  # To include product details
+    product = ProductSerializer()
 
     class Meta:
         model = CartItem
         fields = ['id', 'product', 'quantity']
 
 class CartSerializer(serializers.ModelSerializer):
-    items = CartItemSerializer(many=True)
+    items = CartItemSerializer(many=True)  # Use related_name="items"
 
     class Meta:
         model = Cart
-        fields = ['id', 'created_at', 'items']
+        fields = ['id', 'items', 'created_at']
