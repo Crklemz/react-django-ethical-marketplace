@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { addToCart as addToCartAPI } from '../services/cartService';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { fetchCart, addToCart as addToCartAPI, removeFromCart as removeFromCartAPI, checkoutCart } from '../services/cartService';
 
 interface Product {
     id: number;
@@ -8,51 +8,80 @@ interface Product {
     price: number;
 }
 
-interface CartItem extends Product {
+interface CartItem {
+    id: number;
+    product: Product;
     quantity: number;
 }
 
 interface CartContextProps {
     cart: CartItem[];
-    addToCart: (product: Product) => Promise<void>;
-    removeFromCart: (productId: number) => void;
+    addToCart: (productId: number, quantity: number) => Promise<void>;
+    removeFromCart: (cartItemId: number) => Promise<void>;
     clearCart: () => void;
+    checkout: () => Promise<void>;
+    loading: boolean;
+    error: string | null;
 }
 
 const CartContext = createContext<CartContextProps | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [cart, setCart] = useState<CartItem[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const addToCart = async (product: Product) => {
+    const syncCartWithBackend = async () => {
+        setLoading(true);
         try {
-            const cartItem = await addToCartAPI(product.id, 1); // Call backend API
-            setCart((prevCart) => {
-                const existingItem = prevCart.find((item) => item.id === product.id);
-                if (existingItem) {
-                    return prevCart.map((item) =>
-                        item.id === product.id
-                            ? { ...item, quantity: item.quantity + 1 }
-                            : item
-                    );
-                }
-                return [...prevCart, { ...product, quantity: cartItem.quantity }];
-            });
-        } catch (error) {
-            console.error('Error adding to cart:', error);
+            const updatedCart = await fetchCart();
+            setCart(updatedCart.items || []); // Handle empty cart gracefully
+        } catch (err) {
+            setError('Failed to sync cart.');
+        } finally {
+            setLoading(false);
         }
     };
 
-    const removeFromCart = (productId: number) => {
-        setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
+    useEffect(() => {
+        syncCartWithBackend();
+    }, []);
+
+    const addToCart = async (productId: number, quantity: number) => {
+        try {
+            await addToCartAPI(productId, quantity);
+            await syncCartWithBackend();
+        } catch (error) {
+            setError('Error adding to cart.');
+        }
+    };
+
+    const removeFromCart = async (cartItemId: number) => {
+        try {
+            await removeFromCartAPI(cartItemId);
+            await syncCartWithBackend();
+        } catch (error) {
+            setError('Error removing from cart.');
+        }
     };
 
     const clearCart = () => {
         setCart([]);
     };
 
+    const checkout = async () => {
+        try {
+            await checkoutCart();
+            clearCart();
+        } catch (error) {
+            setError('Error during checkout.');
+        }
+    };
+
     return (
-        <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
+        <CartContext.Provider
+            value={{ cart, addToCart, removeFromCart, clearCart, checkout, loading, error }}
+        >
             {children}
         </CartContext.Provider>
     );

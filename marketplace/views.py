@@ -107,4 +107,13 @@ class AddToCartView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+class CheckoutView(APIView):
+    def post(self, request):
+        cart = Cart.objects.first()  # Replace with actual logic for fetching user's cart
+        if not cart:
+            return Response({"detail": "Cart not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Clear the cart (or implement order processing logic)
+        cart.items.all().delete()
+        return Response({"message": "Checkout successful. Cart has been cleared."}, status=status.HTTP_200_OK)
 
